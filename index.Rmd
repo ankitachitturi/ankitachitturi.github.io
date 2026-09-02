@@ -26,6 +26,6 @@ I am a fourth-year Statistics and Data Science student at UT Austin on the pre-m
 
 **Website built on:**
 
-```{r}
+```{r, echo=FALSE}
 Sys.time()
 ```
