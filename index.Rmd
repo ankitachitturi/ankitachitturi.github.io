@@ -24,7 +24,7 @@ I am a fourth-year Statistics and Data Science student at UT Austin on the pre-m
 ## Image
 ![](IMG_9799.JPG)
 
-**Website built on:""
+**Website built on:**
 
 ```{r}
 Sys.time()
