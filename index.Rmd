@@ -1,0 +1,31 @@
+---
+title: "Ankita Chitturi"
+output: html_document
+date: "2026-09-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Me!
+
+I am a fourth-year Statistics and Data Science student at UT Austin on the pre-med track. I am interested in clinical care and research, and I hope to pursue a career in healthcare.
+
+## Hobbies
+
+- Water lake activities
+- Napping
+- Watching new shows (send recs)
+
+## GitHub
+[GitHub profile](https://github.com/ankitachitturi)
+
+## Image
+![](IMG_9799.JPG)
+
+**Website built on:""
+
+```{r}
+Sys.time()
+```
