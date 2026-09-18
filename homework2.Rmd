@@ -1,0 +1,159 @@
+---
+title: "HW2: PCA Image Compression"
+output: html_document
+date: "2026-09-18"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Image Compression
+```{r}
+library(readr)
+
+#Image compression
+compressed <- function(x, k) {
+  pca <- prcomp(x, center = FALSE)
+  x_approx <- pca$x[, 1:k, drop = FALSE] %*%
+              t(pca$rotation[, 1:k, drop = FALSE])
+  error <- norm(x - x_approx, type = "F")
+  return(list(
+    approximation = x_approx,
+    error = error
+  ))
+}
+```
+
+```{r, message = FALSE, echo = FALSE}
+#reading in images 
+image1 <- read_csv("image1.csv")
+image1 <- data.matrix(image1)
+
+image2 <- read_csv("image2.csv")
+image2 <- data.matrix(image2)
+
+image3 <- read_csv("image3.csv")
+image3 <- data.matrix(image3)
+
+image4 <- read_csv("image4.csv")
+image4 <- data.matrix(image4)
+```
+
+## Image 1
+```{r, echo=FALSE}
+# plot image 
+plot_image <- function(x, title = "") {
+  image(
+    t(x[nrow(x):1, ]),
+    col = gray.colors(256),
+    axes = FALSE,
+    main = title
+  )}
+
+# 10 PCA approx
+plot_approximations <- function(x) {
+  
+  par(mfrow = c(3, 4))
+  
+  plot_image(x, "Original")
+  
+  for (k in 1:10) {
+    result <- compressed(x, k)
+    plot_image(result$approximation, paste("k =", k))
+  }}
+
+plot_approximations(image1)
+
+# errors vs k
+# Error vs k
+error_plot <- function(x) {
+  
+  max_k <- ncol(x)
+  errors <- numeric(max_k)
+  
+  for (k in seq_len(max_k)) {
+    errors[k] <- compressed(x, k)$error
+  }
+  plot(
+    seq_len(max_k),
+    errors,
+    type = "l",
+    xlab = "k",
+    ylab = "Error",
+    main = "Approximation Error vs. k"
+  )
+}
+error_plot(image1)
+
+# eg and PC
+first_pc_plot <- function(x) {
+  
+  pca <- prcomp(x, center = FALSE)
+  
+  par(mfrow = c(1, 2))
+  
+  plot(
+    pca$rotation[, 1],
+    type = "l",
+    xlab = "Column",
+    ylab = "Value",
+    main = "First Eigenvector"
+  )
+  
+  plot(
+    pca$x[, 1],
+    type = "l",
+    xlab = "Row",
+    ylab = "Score",
+    main = "First PC Score"
+  )}
+first_pc_plot(image1)
+
+
+```
+
+The first eigenvector is close to zero for most columns, but it has one large negative value around the 80th column. This tells us that the first principal component is capturing a strong feature in the part of the image rather than a variation spread across the columns. The first PC scores vary across the rows, which many spikes. The scores show how strongly the pattern represented by the first eigenvector appears in each row of image 1. 
+
+I believe that k = 10 gives a good approximation for the first image because the major visual features and basic structure of the original image are preserved. As k increases, the approximation becomes more similar to the original, while the approximation error decreases.
+
+## Image 2
+```{r, echo = FALSE}
+plot_approximations(image2)
+error_plot(image2)
+first_pc_plot(image2)
+```
+
+The first eigenvector decreases across the columns, suggesting that the first principal component is capturing a gradual change in intensity from one side of the image to the other side. The first PC scores vary widely across the rows, showing that the strength and direction of the pattern changes from each row through image 2. 
+
+I would say that k = 1 gives a good approximation for the second image because the rank-1 approximation captures almost all of the structure of the original image. Increasing k beyond 1 produces barely any change and the approximation error is already small. 
+
+## Image 3
+```{r, echo = FALSE}
+plot_approximations(image3)
+error_plot(image3)
+first_pc_plot(image3)
+```
+
+The first eigenvector changes quite a bit across the columns, with numerous peaks and troughs, suggesting that the first principal component captures a complex pattern of intensity across the image. The first PC scores also change across the rows, reaching a large peak around the middle of the image and becoming negative in other parts. This tells us that the importance of the first principal component differs from one part of the image to another.
+
+I believe that k = 8 is a good approximation of the third image because the main shapes and structure of the original image are recognizable. The lower k values are blurry while increasing k beyond 8 only consists of minor improvements. The approximation error decreases quickly.
+
+## Image 4
+```{r, echo = FALSE}
+plot_approximations(image4)
+error_plot(image4)
+first_pc_plot(image4)
+```
+
+The first eigenvector changes across the columns and has a negative region around the middle of the image. This suggests that the first principal component is affected by features in those columns. The first PC scores vary across the rows and there is a significant negative drop around rows 140-150. This suggests that the pattern represented by the first principal component is stronger in some parts of the image than others. 
+
+I would say that k = 7 gives a good approximation for the fourth image because the structure of the original image is captured at this point. Lower k value images are incomplete and blurry; again, increasing k beyond 7 only gives minimal improvements. 
+
+
+
+
+
+
+
